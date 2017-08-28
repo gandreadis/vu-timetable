@@ -1,6 +1,6 @@
 # VU Timetable
 
-Tool to convert VU timetables (from [rooster.vu.nl](https://rooster.vu.nl)) to `.ics` calendar files, letting you finally add all those events into your calendar.
+Tool to convert VU-Amsterdam timetables (from [rooster.vu.nl](https://rooster.vu.nl)) to `.ics` calendar files, letting you finally add all those events into your calendar.
 
 ## Prerequisites
 1. Git

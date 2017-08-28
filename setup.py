@@ -11,7 +11,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 setup(
     name='vu-timetable',
     version='0.1.0',
-    description='Tool to convert VU timetables to ICS calendar files',
+    description='Tool to convert VU-Amsterdam timetables to ICS calendar files',
     long_description=long_description,
     author='Georgios Andreadis',
     author_email='info@gandreadis.com',
