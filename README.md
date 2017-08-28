@@ -12,4 +12,4 @@ Tool to convert VU timetables (from [rooster.vu.nl](https://rooster.vu.nl)) to `
 3. Generate your timetable per course/module in [rooster.vu.nl](https://rooster.vu.nl). Be sure to select **Type of Report** to be `Module` when generating the table.
 4. Once you are on the HTML page generated for you, hit <kbd>Ctrl-S</kbd> to save the page. To make sure you don't download only the HTML code, select 'HTML only' in the 'save as type' dropdown. Save the file in the cloned directory of this repo, under the name `input.html`.
 5. Run `python main.py` from this directory.
-6. Your calendar file is waiting for you in this directory, called `output.ics` 🎉
+6. Your calendar file is waiting for you in this directory, called `output.ics` 🎉 Import it into the calendar of your choice!
