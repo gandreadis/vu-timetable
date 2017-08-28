@@ -3,6 +3,7 @@ import re
 
 from bs4 import BeautifulSoup
 from ics import Calendar, Event
+from pytz import timezone
 
 
 def main():
@@ -17,6 +18,7 @@ def main():
 
 def get_calendar(soup):
     calendar = Calendar()
+    amsterdam = timezone('Europe/Amsterdam')
 
     entries = soup.select('table tr')
 
@@ -37,8 +39,8 @@ def get_calendar(soup):
             event.name = "{} - {}".format(nth(entry, 6), nth(entry, 8))
             event.location = "VU - {}".format(nth(entry, 9))
             event.description = "Vakcode: {}\nDocent: {}".format(nth(entry, 1), nth(entry, 10))
-            event.begin = start_date + datetime.timedelta(days=(7 * week)) + start_time_delta
-            event.end = start_date + datetime.timedelta(days=(7 * week)) + end_time_delta
+            event.begin = amsterdam.localize(start_date + datetime.timedelta(days=(7 * week)) + start_time_delta)
+            event.end = amsterdam.localize(start_date + datetime.timedelta(days=(7 * week)) + end_time_delta)
 
             calendar.events.append(event)
 
