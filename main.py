@@ -5,9 +5,14 @@ from bs4 import BeautifulSoup
 from ics import Calendar, Event
 from pytz import timezone
 
+AMS_TIMEZONE = timezone('Europe/Amsterdam')
+
 
 def main():
-    with open("input.html", encoding="utf8") as fp:
+    """
+    Reads the file called "input.html" in this directory and outputs a corresponding calendar file called "output.ics".
+    """
+    with open('input.html', encoding='utf8') as fp:
         soup = BeautifulSoup(fp, 'html.parser')
 
     calendar = get_calendar(soup)
@@ -17,57 +22,86 @@ def main():
 
 
 def get_calendar(soup):
+    """
+    Parses the HTML document represented by the BeautifulSoup instance and returns a calendar with events of that page.
+
+    :param soup: the BeautifulSoup instance of the page to be parsed.
+    :return: a calendar instance populated with the parsed events.
+    """
+
     calendar = Calendar()
-    amsterdam = timezone('Europe/Amsterdam')
 
-    entries = soup.select('table tr')
+    rows = soup.select('table tr')
 
-    for entry in entries:
-        if re.search('\d+/\d+/\d+', str(entry)) is None or not re.search('Printdatum', str(entry)) is None:
+    for row in rows:
+        if re.search('\d+/\d+/\d+', str(row)) is None or not re.search('Printdatum', str(row)) is None:
             continue
 
-        start_date = datetime.datetime.strptime(nth(entry, 2), "%d/%m/%y")
-        start_time_ints = nth(entry, 4).split(':')
-        start_time_delta = datetime.timedelta(hours=int(start_time_ints[0]), minutes=int(start_time_ints[1]))
-        end_time_ints = nth(entry, 5).split(':')
-        end_time_delta = datetime.timedelta(hours=int(end_time_ints[0]), minutes=int(end_time_ints[1]))
-
-        weeks = get_weeks(nth(entry, 3))
-
-        for week in weeks:
-            event = Event()
-            event.name = "{} - {}".format(nth(entry, 6), nth(entry, 8))
-            event.location = "VU - {}".format(nth(entry, 9))
-            event.description = "Vakcode: {}\nDocent: {}".format(nth(entry, 1), nth(entry, 10))
-            event.begin = amsterdam.localize(start_date + datetime.timedelta(days=(7 * week)) + start_time_delta)
-            event.end = amsterdam.localize(start_date + datetime.timedelta(days=(7 * week)) + end_time_delta)
-
-            calendar.events.append(event)
+        events = convert_row_to_events(row)
+        calendar.events.extend(events)
 
     return calendar
 
 
-def nth(soup, n):
-    return soup.select_one('td:nth-of-type({})'.format(n)).get_text()
+def convert_row_to_events(row):
+    """
+    Scrapes the given row for event information and returns a list of events that row represents.
+
+    :param row: the BeautifulSoup instance of one <tr> element.
+    :return: a list of events encoded by that row.
+    """
+
+    nth_column = lambda n: row.select_one('td:nth-of-type({})'.format(n)).get_text()
+
+    start_date = datetime.datetime.strptime(nth_column(2), '%d/%m/%y')
+    start_time_ints = nth_column(4).split(':')
+    start_time_delta = datetime.timedelta(hours=int(start_time_ints[0]), minutes=int(start_time_ints[1]))
+    end_time_ints = nth_column(5).split(':')
+    end_time_delta = datetime.timedelta(hours=int(end_time_ints[0]), minutes=int(end_time_ints[1]))
+
+    weeks = convert_ranges_to_weeks(nth_column(3))
+
+    events = []
+
+    for week in weeks:
+        event = Event()
+        event.name = '{} - {}'.format(nth_column(6), nth_column(8))
+        event.location = 'VU - {}'.format(nth_column(9))
+        event.description = 'Vakcode: {}\nDocent: {}'.format(nth_column(1), nth_column(10))
+        event.begin = AMS_TIMEZONE.localize(start_date + datetime.timedelta(days=(7 * week)) + start_time_delta)
+        event.end = AMS_TIMEZONE.localize(start_date + datetime.timedelta(days=(7 * week)) + end_time_delta)
+
+        events.append(event)
+
+    return events
 
 
-def get_weeks(ranges):
-    result = []
+def convert_ranges_to_weeks(ranges):
+    """
+    Takes the given week ranges and returns normalized weeks in those ranges.
+
+    Example: "10-12, 14" evaluates to [0, 1, 2, 4]
+
+    :param ranges: string representing one or more week ranges.
+    :return: a normalized list representation of those ranges.
+    """
+    weeks = []
     for part in ranges.split(','):
         if '-' in part:
-            a, b = part.split('-')
-            a, b = int(a), int(b)
-            result.extend(range(a, b + 1))
+            start, end = part.split('-')
+            start, end = int(start), int(end)
+            weeks.extend(range(start, end + 1))
         else:
-            a = int(part)
-            result.append(a)
+            week = int(part)
+            weeks.append(week)
 
-    if len(result) > 0:
-        for index in range(1, len(result)):
-            result[index] = result[index] - result[0]
-        result[0] = 0
+    # Normalize relative to first week
+    if len(weeks) > 0:
+        for index in range(1, len(weeks)):
+            weeks[index] = weeks[index] - weeks[0]
+        weeks[0] = 0
 
-    return result
+    return weeks
 
 
 if __name__ == "__main__":
