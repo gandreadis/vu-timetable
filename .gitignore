@@ -9,3 +9,6 @@ output.ics
 
 # IntelliJ IDE platform
 /.idea/
+
+# Log files
+*.log

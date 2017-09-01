@@ -1,24 +1,68 @@
 import datetime
 import re
+import sys
 
 from bs4 import BeautifulSoup
 from ics import Calendar, Event
 from pytz import timezone
+from selenium import webdriver
 
 AMS_TIMEZONE = timezone('Europe/Amsterdam')
 
 
 def main():
     """
-    Reads the file called "input.html" in this directory and outputs a corresponding calendar file called "output.ics".
+    Fetches a course timetable and outputs a corresponding calendar file called "output.ics".
     """
-    with open('input.html', encoding='utf8') as fp:
-        soup = BeautifulSoup(fp, 'html.parser')
+    if len(sys.argv) != 2:
+        print('Usage; python main.py "course name"')
+        return
+
+    print('Retrieving your timetable page from rooster.vu.nl...')
+    html_source = get_html(sys.argv[1])
+
+    print('Parsing the page for timetable events...')
+    soup = BeautifulSoup(html_source, 'html.parser')
 
     calendar = get_calendar(soup)
 
     with open('output.ics', 'w') as output_file:
         output_file.writelines(calendar)
+
+    print('Your calendar file should be ready for you, look for "output.ics" in this folder!')
+
+
+def get_html(course_name):
+    browser = webdriver.Chrome()
+    browser.get('https://rooster.vu.nl/')
+
+    # Go to 'modules' page
+    browser.find_element_by_id('LinkBtn_modules').click()
+
+    # Select course options
+    browser.find_element_by_id('tWildcard').send_keys(course_name)
+    browser.find_element_by_id('bWildcard').click()
+    browser.find_element_by_id('dlObject').find_element_by_tag_name('option').click()
+    print('test')
+    select_option(browser, 'lbWeeks', 'Semester')
+
+    # Go to 'modules' page
+    browser.find_element_by_id('bGetTimetable').click()
+
+    html_source = browser.page_source
+    browser.close()
+
+    return html_source
+
+
+def select_option(browser, id, text):
+    select_element = browser.find_element_by_id(id)
+    lowercase_text = text.lower()
+
+    for option in select_element.find_elements_by_tag_name('option'):
+        if lowercase_text in option.text.lower():
+            option.click()
+            break
 
 
 def get_calendar(soup):
