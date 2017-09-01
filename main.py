@@ -31,7 +31,7 @@ def get_calendar(soup):
 
     calendar = Calendar()
 
-    rows = soup.select('table tr')
+    rows = soup.select('table.spreadsheet tr')
 
     for row in rows:
         if re.search('\d+/\d+/\d+', str(row)) is None or not re.search('Printdatum', str(row)) is None:
