@@ -17,5 +17,5 @@ setup(
     author_email='info@gandreadis.com',
     license='MIT',
     keywords='sample setuptools development',
-    install_requires=['bs4', 'ics', 'pytz'],
+    install_requires=['beautifulsoup4>=4.6.0', 'bs4', 'ics', 'pytz'],
 )
