@@ -1,0 +1,18 @@
+group 'com.gandreadis'
+version '0.1.0'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.seleniumhq.selenium:selenium-java:2.41.0'
+    compile 'net.sf.biweekly:biweekly:0.6.1'
+    compile 'org.apache.commons:commons-lang3:3.6'
+
+    testCompile 'junit:junit:4.12'
+}

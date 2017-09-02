@@ -3,12 +3,18 @@
 /dist/
 /vu_timetable.egg-info/
 
-# Input and Output files
-input.html
+# Calendar output file
 output.ics
 
 # IntelliJ IDE platform
 /.idea/
+/out/
+
+/gradle/
+/.gradle/
+gradlew
+gradlew.bat
+
 
 # Log files
 *.log
