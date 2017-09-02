@@ -94,7 +94,7 @@ final class Parser {
                 weeks.addAll(IntStream.rangeClosed(bounds[0], bounds[1])
                         .boxed().collect(Collectors.toList()));
             } else {
-                final int week = Integer.parseInt(part);
+                final int week = Integer.parseInt(part.trim());
                 weeks.add(week);
             }
         }
