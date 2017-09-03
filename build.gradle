@@ -1,0 +1,29 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '2.0.1'
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.seleniumhq.selenium:selenium-java:2.41.0'
+    compile 'net.sf.biweekly:biweekly:0.6.1'
+    compile 'org.apache.commons:commons-lang3:3.6'
+
+    testCompile 'junit:junit:4.12'
+}
+
+group 'com.gandreadis'
+version '0.1.0'
+
+sourceCompatibility = 1.8
+
+jar {
+    manifest {
+        attributes('Main-Class': 'com.gandreadis.vutimetable.VUTimetable',
+                'Implementation-Title': rootProject.name,
+                'Implementation-Version': version)
+    }
+}

@@ -1,11 +1,20 @@
-# Setup.py folders
-/build/
-/dist/
-/vu_timetable.egg-info/
-
-# Input and Output files
-input.html
+# Calendar output file
 output.ics
 
 # IntelliJ IDE platform
 /.idea/
+/out/
+
+# Gradle
+/gradle/
+/.gradle/
+gradlew
+gradlew.bat
+
+# Log files
+*.log
+
+# Setup.py folders
+/build/
+/dist/
+/vu_timetable.egg-info/
