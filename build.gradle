@@ -1,9 +1,7 @@
-group 'com.gandreadis'
-version '0.1.0'
-
-apply plugin: 'java'
-
-sourceCompatibility = 1.8
+plugins {
+    id 'com.github.johnrengelman.shadow' version '2.0.1'
+    id 'java'
+}
 
 repositories {
     mavenCentral()
@@ -16,3 +14,14 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
 }
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.gandreadis.vutimetable.VUTimetable'
+    }
+}
+
+group 'com.gandreadis'
+version '0.1.0'
+
+sourceCompatibility = 1.8

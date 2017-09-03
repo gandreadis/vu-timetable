@@ -13,11 +13,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 final class Parser {
+    private static final Logger LOGGER = Logger.getLogger(Parser.class.getName());
     private static final Pattern DATE_PATTERN = Pattern.compile("\\d+/\\d+/\\d+");
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("d/M/yy");
@@ -29,20 +32,25 @@ final class Parser {
 
     ICalendar parse() {
         final ICalendar calendar = new ICalendar();
-        final List<WebElement> rows = driver.findElements(By.cssSelector("table.spreadsheet tr")).stream()
-                .filter(row -> !row.getText().contains("Printdatum")
-                        && DATE_PATTERN.matcher(getInnerHTML(row)).find())
-                .collect(Collectors.toList());
+        LOGGER.log(Level.INFO, "Fetching timetable rows and creating corresponding calendar events");
+        final List<WebElement> rows = getRows();
 
-        for (WebElement row : rows) {
-            try {
+        try {
+            for (WebElement row : rows) {
                 calendar.getEvents().addAll(getRowEvents(row));
-            } catch (ParseException e) {
-                e.printStackTrace();
             }
+        } catch (ParseException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return calendar;
+    }
+
+    private List<WebElement> getRows() {
+        return driver.findElements(By.cssSelector("table.spreadsheet tr")).stream()
+                .filter(row -> !row.getText().contains("Printdatum")
+                        && DATE_PATTERN.matcher(getInnerHTML(row)).find())
+                .collect(Collectors.toList());
     }
 
     private String getInnerHTML(final WebElement element) {

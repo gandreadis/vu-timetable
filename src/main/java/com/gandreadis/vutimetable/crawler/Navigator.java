@@ -4,7 +4,12 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 final class Navigator {
+    private static final Logger LOGGER = Logger.getLogger(Navigator.class.getName());
+
     private final Crawler crawler;
     private final WebDriver driver;
 
@@ -14,11 +19,16 @@ final class Navigator {
     }
 
     void navigate() {
+        LOGGER.log(Level.INFO, "Navigating to rooster.vu.nl");
         driver.get("https://rooster.vu.nl/");
 
+        LOGGER.log(Level.INFO, "Switching to the 'module' tab");
         navigateToModulesTab();
+        LOGGER.log(Level.INFO, "Searching for your course and selecting it");
         selectCourse();
+        LOGGER.log(Level.INFO, "Selecting the option outputting one semester worth of events");
         selectSemester();
+        LOGGER.log(Level.INFO, "Navigating to the timetable page");
         navigateToTimetable();
     }
 
